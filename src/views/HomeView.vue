@@ -42,7 +42,10 @@ async function handleSearch({ query, type }: { query: string; type: SearchType }
         <p class="text-body-1 text-white mb-6 opacity-80">
           Explorá millones de títulos con OpenLibrary. Buscá por título, autor o ISBN.
         </p>
-        <SearchBar @search="handleSearch" />
+        <!-- v-theme-provider resetea el contexto de color para que los inputs tengan texto oscuro -->
+        <v-theme-provider theme="light">
+          <SearchBar @search="handleSearch" />
+        </v-theme-provider>
       </v-container>
     </v-sheet>
 

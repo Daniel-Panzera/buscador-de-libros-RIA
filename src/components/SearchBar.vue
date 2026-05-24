@@ -25,8 +25,8 @@ function handleSubmit(): void {
 
 <template>
   <v-form @submit.prevent="handleSubmit">
-    <v-row align="center" no-gutters>
-      <v-col cols="12" sm="3" class="pr-sm-2 mb-2 mb-sm-0">
+    <v-row align="center" dense>
+      <v-col cols="12" sm="3">
         <v-select
           v-model="searchType"
           :items="searchOptions"
@@ -36,30 +36,29 @@ function handleSubmit(): void {
           variant="outlined"
           density="comfortable"
           hide-details
-          bg-color="white"
+          bg-color="surface"
         />
       </v-col>
 
-      <v-col cols="12" sm="7" class="pr-sm-2 mb-2 mb-sm-0">
+      <v-col cols="12" sm="6">
         <v-text-field
           v-model="query"
           label="Ingresá el término de búsqueda..."
           variant="outlined"
           density="comfortable"
           hide-details
-          bg-color="white"
+          bg-color="surface"
           clearable
           @keyup.enter="handleSubmit"
         />
       </v-col>
 
-      <v-col cols="12" sm="2">
+      <v-col cols="12" sm="3">
         <v-btn
           type="submit"
           color="primary"
           size="large"
           block
-          prepend-icon="mdi-magnify"
           :disabled="!query.trim()"
         >
           Buscar
