@@ -28,6 +28,7 @@
     "@vue/test-utils": "^2.4.10",
     "@vue/tsconfig": "^0.9.1",
     "jsdom": "^29.1.1",
+    "sass": "^1.100.0",
     "typescript": "~6.0.2",
     "vite": "^8.0.12",
     "vite-plugin-vuetify": "^2.1.3",

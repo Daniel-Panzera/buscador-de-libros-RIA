@@ -5,6 +5,20 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BookFinder - Buscador de Libros</title>
+    <!-- Íconos Material Design — carga async para no bloquear render -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@7/css/materialdesignicons.min.css"
+      media="print"
+      onload="this.media='all'"
+    >
+    <noscript>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7/css/materialdesignicons.min.css">
+    </noscript>
+    <!-- Preconexión a OpenLibrary API -->
+    <link rel="preconnect" href="https://openlibrary.org">
+    <link rel="preconnect" href="https://covers.openlibrary.org">
   </head>
   <body>
     <div id="app"></div>
