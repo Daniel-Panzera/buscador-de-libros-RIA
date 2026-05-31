@@ -1,26 +1,41 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import SearchBar from '@/components/SearchBar.vue'
 import BookCard from '@/components/BookCard.vue'
 import EmptyState from '@/components/EmptyState.vue'
 import { searchBooks } from '@/services/openLibrary'
 import type { BookDoc, SearchType } from '@/types/book'
 
+const PAGE_SIZE = 20
+// OpenLibrary no permite paginar indefinidamente; acotamos a un máximo razonable.
+const MAX_PAGES = 100
+
 const books = ref<BookDoc[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
 const searched = ref(false)
 const totalFound = ref(0)
+const currentPage = ref(1)
 
-async function handleSearch({ query, type }: { query: string; type: SearchType }): Promise<void> {
+// Última búsqueda activa, para poder recargar al cambiar de página.
+const lastQuery = ref('')
+const lastType = ref<SearchType>('q')
+
+const pageCount = computed(() => {
+  const pages = Math.ceil(totalFound.value / PAGE_SIZE)
+  return Math.min(pages, MAX_PAGES)
+})
+
+async function fetchPage(page: number): Promise<void> {
   loading.value = true
   error.value = null
   searched.value = true
 
   try {
-    const result = await searchBooks(query, type)
+    const result = await searchBooks(lastQuery.value, lastType.value, PAGE_SIZE, page)
     books.value = result.docs
     totalFound.value = result.numFound
+    currentPage.value = page
   } catch {
     error.value = 'No se pudo conectar con OpenLibrary. Verificá tu conexión e intentá de nuevo.'
     books.value = []
@@ -28,6 +43,19 @@ async function handleSearch({ query, type }: { query: string; type: SearchType }
   } finally {
     loading.value = false
   }
+}
+
+function handleSearch({ query, type }: { query: string; type: SearchType }): void {
+  lastQuery.value = query
+  lastType.value = type
+  fetchPage(1)
+}
+
+function goToPage(page: number): void {
+  if (page === currentPage.value) return
+  fetchPage(page)
+  // Vuelve al inicio de los resultados al cambiar de página.
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 </script>
 
@@ -79,6 +107,20 @@ async function handleSearch({ query, type }: { query: string; type: SearchType }
         <div class="books-grid">
           <BookCard v-for="book in books" :key="book.key" :book="book" />
         </div>
+
+        <!-- Paginación -->
+        <v-pagination
+          v-if="pageCount > 1"
+          :model-value="currentPage"
+          :length="pageCount"
+          :total-visible="7"
+          :disabled="loading"
+          show-first-last-page
+          rounded="circle"
+          color="primary"
+          class="mt-8"
+          @update:model-value="goToPage"
+        />
       </template>
 
       <!-- No results after search -->
@@ -144,5 +186,14 @@ async function handleSearch({ query, type }: { query: string; type: SearchType }
 
 @media (max-width: 600px) {
   .books-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* El "..." del paginador es un botón deshabilitado y queda atenuado.
+   Dentro de la lista, el único ítem deshabilitado es el "..." (los flechas
+   van fuera de .v-pagination__item), así que lo igualo al color de los números. */
+.results-section :deep(.v-pagination__list .v-pagination__item .v-btn[ellipsis]),
+.results-section :deep(.v-pagination__list .v-pagination__item .v-btn--disabled) {
+  color: #C8962A !important;
+  opacity: 1 !important;
 }
 </style>

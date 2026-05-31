@@ -11,10 +11,12 @@ const COVERS_BASE = 'https://covers.openlibrary.org/b/id'
 export async function searchBooks(
   query: string,
   type: SearchType = 'q',
-  limit = 20
+  limit = 20,
+  page = 1
 ): Promise<SearchResponse> {
   const params: Record<string, string | number> = {
     limit,
+    page,
     fields: 'key,title,author_name,first_publish_year,cover_i,isbn,subject,number_of_pages_median'
   }
   params[type] = query
