@@ -25,30 +25,32 @@ function handleSubmit(): void {
 
 <template>
   <v-form @submit.prevent="handleSubmit">
-    <v-row align="center" dense>
+    <v-row align="end" dense>
       <v-col cols="12" sm="3">
+        <label class="field-label">Buscar por</label>
         <v-select
           v-model="searchType"
           :items="searchOptions"
           item-title="title"
           item-value="value"
-          label="Buscar por"
           variant="outlined"
           density="comfortable"
           hide-details
-          bg-color="surface"
+          class="glass-field"
+          :menu-props="{ contentClass: 'search-type-menu' }"
         />
       </v-col>
 
       <v-col cols="12" sm="6">
+        <label class="field-label">Término de búsqueda</label>
         <v-text-field
           v-model="query"
-          label="Ingresá el término de búsqueda..."
+          placeholder="Ingresá el término de búsqueda..."
           variant="outlined"
           density="comfortable"
           hide-details
-          bg-color="surface"
           clearable
+          class="glass-field"
           @keyup.enter="handleSubmit"
         />
       </v-col>
@@ -56,10 +58,10 @@ function handleSubmit(): void {
       <v-col cols="12" sm="3">
         <v-btn
           type="submit"
-          color="primary"
           size="large"
           block
           :disabled="!query.trim()"
+          class="search-btn"
         >
           Buscar
         </v-btn>
@@ -67,3 +69,117 @@ function handleSubmit(): void {
     </v-row>
   </v-form>
 </template>
+
+<style scoped>
+.field-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #EDE0CA;
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.search-btn {
+  background-color: #C8962A !important;
+  color: #12100C !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em;
+}
+
+.search-btn:disabled {
+  background-color: rgba(200, 150, 42, 0.35) !important;
+  color: rgba(18, 16, 12, 0.5) !important;
+}
+
+:deep(.glass-field .v-field) {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(6px);
+}
+
+:deep(.glass-field .v-field--focused .v-field__outline) {
+  color: #C8962A !important;
+}
+
+:deep(.glass-field .v-field__outline) {
+  --v-field-border-opacity: 0.5;
+  color: rgba(237, 224, 202, 0.4) !important;
+}
+
+:deep(.glass-field input),
+:deep(.glass-field .v-select__selection-text) {
+  color: #EDE0CA !important;
+}
+
+:deep(.glass-field .v-field__input::placeholder) {
+  color: rgba(237, 224, 202, 0.5) !important;
+}
+
+:deep(.glass-field .v-select__menu-icon) {
+  color: #EDE0CA !important;
+}
+
+/* Oculta el botón de borrado cuando el campo está vacío */
+:deep(.glass-field .v-field:not(.v-field--dirty) .v-field__clearable) {
+  display: none !important;
+}
+
+/* Centra verticalmente la cruz y la corre hacia la derecha (estaba pegada a la izquierda) */
+:deep(.glass-field .v-field__clearable) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline-end: 0;
+  margin-inline-end: -8px;
+}
+
+/* Texto oscuro en el botón al hacer hover/click */
+.search-btn:hover,
+.search-btn:active,
+.search-btn:focus {
+  color: #12100C !important;
+}
+
+:deep(.search-btn .v-btn__overlay) {
+  background-color: rgba(18, 16, 12, 0.1) !important;
+}
+</style>
+
+<!--
+  El menú del v-select se teletransporta al <body>, fuera del alcance del
+  CSS scoped. Por eso el ítem activo se estiliza con un bloque global,
+  acotado mediante la clase del contenido del menú (search-type-menu).
+-->
+<style>
+.search-type-menu .v-list-item--active {
+  background-color: #C8962A !important;
+}
+
+.search-type-menu .v-list-item--active .v-list-item-title {
+  color: #12100C !important;
+  font-weight: 600;
+}
+
+/* Neutraliza el overlay translúcido para que el crema quede limpio */
+.search-type-menu .v-list-item--active .v-list-item__overlay {
+  opacity: 0 !important;
+}
+
+/* Hover sobre ítems NO seleccionados: crema translúcido para no tapar el texto */
+.search-type-menu .v-list-item:not(.v-list-item--active):hover .v-list-item__overlay {
+  background-color: #C8962A !important;
+  opacity: 0.12 !important;
+}
+
+/* Oculta la barra de desplazamiento del menú (Firefox / WebKit) */
+.search-type-menu,
+.search-type-menu .v-list {
+  scrollbar-width: none;
+}
+
+.search-type-menu::-webkit-scrollbar,
+.search-type-menu .v-list::-webkit-scrollbar {
+  display: none;
+}
+</style>

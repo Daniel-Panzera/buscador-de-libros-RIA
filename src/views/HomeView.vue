@@ -34,7 +34,14 @@ async function handleSearch({ query, type }: { query: string; type: SearchType }
 <template>
   <div>
     <!-- Hero section -->
-    <v-sheet color="primary" class="py-10 px-4">
+    <div
+      class="hero-section"
+      :style="{
+        backgroundImage: 'url(https://static.vecteezy.com/system/resources/thumbnails/048/330/323/small_2x/elegant-home-library-featuring-traditional-wooden-bookshelves-photo.jpeg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }"
+    >
       <v-container>
         <h1 class="text-h4 text-md-h3 font-weight-bold text-white mb-2">
           Buscador de Libros
@@ -42,21 +49,16 @@ async function handleSearch({ query, type }: { query: string; type: SearchType }
         <p class="text-body-1 text-white mb-6 opacity-80">
           Explorá millones de títulos con OpenLibrary. Buscá por título, autor o ISBN.
         </p>
-        <!-- v-theme-provider resetea el contexto de color para que los inputs tengan texto oscuro -->
-        <v-theme-provider theme="light">
-          <SearchBar @search="handleSearch" />
-        </v-theme-provider>
+        <SearchBar @search="handleSearch" />
       </v-container>
-    </v-sheet>
+    </div>
 
     <!-- Results section -->
-    <v-container class="py-6">
+    <div class="results-section">
       <!-- Loading skeletons -->
-      <v-row v-if="loading">
-        <v-col v-for="i in 8" :key="i" cols="12" sm="6" md="4" lg="3">
-          <v-skeleton-loader type="card" />
-        </v-col>
-      </v-row>
+      <div v-if="loading" class="books-grid">
+        <v-skeleton-loader v-for="i in 10" :key="i" type="card" />
+      </div>
 
       <!-- Error state -->
       <v-alert
@@ -74,18 +76,9 @@ async function handleSearch({ query, type }: { query: string; type: SearchType }
         <p class="text-body-2 text-grey mb-4">
           {{ totalFound.toLocaleString('es-AR') }} resultados encontrados
         </p>
-        <v-row>
-          <v-col
-            v-for="book in books"
-            :key="book.key"
-            cols="12"
-            sm="6"
-            md="4"
-            lg="3"
-          >
-            <BookCard :book="book" />
-          </v-col>
-        </v-row>
+        <div class="books-grid">
+          <BookCard v-for="book in books" :key="book.key" :book="book" />
+        </div>
       </template>
 
       <!-- No results after search -->
@@ -103,6 +96,53 @@ async function handleSearch({ query, type }: { query: string; type: SearchType }
         title="¡Empezá a buscar!"
         description="Ingresá el título, autor o ISBN de un libro para encontrarlo."
       />
-    </v-container>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.hero-section {
+  position: relative;
+  padding: 60px 16px 50px;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(10, 7, 4, 0.62), rgba(18, 13, 8, 0.50));
+  pointer-events: none;
+}
+
+.hero-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+.results-section {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 28px;
+  background-color: #12100C;
+  min-height: 100vh;
+}
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 18px;
+}
+
+@media (max-width: 1280px) {
+  .books-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (max-width: 960px) {
+  .books-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  .books-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+</style>

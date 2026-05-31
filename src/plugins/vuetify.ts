@@ -2,15 +2,22 @@ import { createVuetify } from 'vuetify'
 
 export default createVuetify({
   theme: {
-    defaultTheme: 'light',
+    defaultTheme: 'library',
     themes: {
-      light: {
+      library: {
+        dark: true,
         colors: {
-          primary: '#1565C0',
-          secondary: '#FFA000',
-          accent: '#FF6F00',
-          error: '#C62828',
-          success: '#2E7D32',
+          background:         '#12100C',
+          surface:            '#1E1A14',
+          'surface-variant':  '#2A2318',
+          primary:            '#C8962A',
+          secondary:          '#8D6E47',
+          accent:             '#D4AF37',
+          error:              '#CF6679',
+          success:            '#81C784',
+          'on-background':    '#EDE0CA',
+          'on-surface':       '#EDE0CA',
+          'on-primary':       '#12100C',
         }
       }
     }

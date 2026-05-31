@@ -50,27 +50,27 @@ function toggleReadingList(): void {
   <v-card height="100%" class="d-flex flex-column" elevation="2">
     <v-img
       :src="coverUrl ?? undefined"
-      height="220"
+      :aspect-ratio="2/3"
       cover
       :alt="book.title"
     >
       <template #error>
-        <div class="d-flex align-center justify-center fill-height bg-grey-lighten-3">
-          <v-icon icon="mdi-book-outline" size="64" color="grey-lighten-1" />
+        <div class="d-flex align-center justify-center fill-height bg-surface-variant">
+          <v-icon icon="mdi-book-outline" size="64" color="secondary" />
         </div>
       </template>
       <template v-if="!coverUrl" #default>
-        <div class="d-flex align-center justify-center fill-height bg-grey-lighten-3">
-          <v-icon icon="mdi-book-outline" size="64" color="grey-lighten-1" />
+        <div class="d-flex align-center justify-center fill-height bg-surface-variant">
+          <v-icon icon="mdi-book-outline" size="64" color="secondary" />
         </div>
       </template>
     </v-img>
 
-    <v-card-title class="text-subtitle-1 font-weight-bold line-clamp-2 pb-0">
+    <v-card-title class="book-title pb-0">
       {{ book.title }}
     </v-card-title>
 
-    <v-card-subtitle class="pb-0">{{ authorDisplay }}</v-card-subtitle>
+    <v-card-subtitle class="book-subtitle pb-0">{{ authorDisplay }}</v-card-subtitle>
 
     <v-card-text class="flex-grow-1 pt-2">
       <v-chip
@@ -111,3 +111,20 @@ function toggleReadingList(): void {
     </v-card-actions>
   </v-card>
 </template>
+
+<style scoped>
+.book-title {
+  font-size: 0.875rem !important;
+  font-weight: 700;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.book-subtitle {
+  font-size: 0.8rem !important;
+  opacity: 0.7;
+}
+</style>

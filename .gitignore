@@ -17,6 +17,10 @@ lighthouse-*.json
 lighthouse-*.html
 coverage/
 
+# Claude Code (local, no va al repo)
+CLAUDE.md
+.claude/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

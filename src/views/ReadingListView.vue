@@ -65,7 +65,7 @@ function formatDate(iso: string): string {
     </EmptyState>
 
     <!-- Lista de libros -->
-    <v-list v-else lines="two" class="pa-0">
+    <v-list v-else lines="two" class="pa-0 reading-list">
       <v-list-item
         v-for="item in items"
         :key="item.key"
@@ -110,3 +110,21 @@ function formatDate(iso: string): string {
     </v-list>
   </v-container>
 </template>
+
+<style scoped>
+/* Corta el desbordamiento horizontal que generaba la barra en la lista */
+.reading-list {
+  overflow-x: hidden;
+}
+
+/* Oculta cualquier barra de desplazamiento residual (Firefox / WebKit) */
+.reading-list,
+.reading-list :deep(*) {
+  scrollbar-width: none;
+}
+
+.reading-list::-webkit-scrollbar,
+.reading-list :deep(*::-webkit-scrollbar) {
+  display: none;
+}
+</style>

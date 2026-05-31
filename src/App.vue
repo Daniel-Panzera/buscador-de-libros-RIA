@@ -10,3 +10,4 @@ import AppNavbar from '@/components/AppNavbar.vue'
     </v-main>
   </v-app>
 </template>
+

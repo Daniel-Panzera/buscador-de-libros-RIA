@@ -100,10 +100,10 @@ onMounted(async () => {
           />
           <div
             v-else
-            class="d-flex align-center justify-center bg-grey-lighten-3 rounded-lg mx-auto"
+            class="d-flex align-center justify-center bg-surface-variant rounded-lg mx-auto"
             style="width: 200px; height: 300px"
           >
-            <v-icon icon="mdi-book-outline" size="80" color="grey-lighten-1" />
+            <v-icon icon="mdi-book-outline" size="80" color="secondary" />
           </div>
 
           <v-btn
@@ -120,7 +120,7 @@ onMounted(async () => {
         <!-- Información -->
         <v-col cols="12" sm="8" md="9">
           <h1 class="text-h5 text-md-h4 font-weight-bold mb-1">{{ book.title }}</h1>
-          <p class="text-h6 text-grey-darken-1 mb-4">{{ authorDisplay }}</p>
+          <p class="text-h6 mb-4" style="color: #C8962A;">{{ authorDisplay }}</p>
 
           <v-row class="mb-4">
             <v-col v-if="book.first_publish_year" cols="auto">
@@ -146,7 +146,7 @@ onMounted(async () => {
           </template>
           <template v-else-if="description">
             <h2 class="text-subtitle-1 font-weight-bold mb-2">Descripción</h2>
-            <p class="text-body-2 text-grey-darken-2 mb-4" style="white-space: pre-line">
+            <p class="text-body-2 mb-4" style="white-space: pre-line; color: #B8A990;">
               {{ description }}
             </p>
           </template>
