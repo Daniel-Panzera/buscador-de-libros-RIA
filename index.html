@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="BookFinder: buscá y descubrí libros con la API de OpenLibrary. Buscá por título, autor o ISBN y armá tu lista de lectura."
+    />
     <title>BookFinder - Buscador de Libros</title>
     <!-- Íconos Material Design — carga async para no bloquear render -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -19,6 +23,8 @@
     <!-- Preconexión a OpenLibrary API -->
     <link rel="preconnect" href="https://openlibrary.org">
     <link rel="preconnect" href="https://covers.openlibrary.org">
+    <!-- Precarga del fondo del hero (imagen LCP) para acelerar el render -->
+    <link rel="preload" as="image" href="/hero-library.webp">
   </head>
   <body>
     <div id="app"></div>
