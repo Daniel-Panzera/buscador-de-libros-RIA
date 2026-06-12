@@ -109,11 +109,14 @@ tests/
 ├── setup.ts                              # Vuetify + Pinia global setup
 ├── unit/
 │   ├── readingList.store.spec.ts         # 7 tests: CRUD, localStorage, duplicados
-│   ├── SearchBar.spec.ts                 # 3 tests: render, disabled, emit
-│   └── EmptyState.spec.ts               # 4 tests: props, slot
+│   ├── SearchBar.spec.ts                 # 4 tests: render, disabled/enabled, emit, guard vacío
+│   ├── EmptyState.spec.ts                # 4 tests: props, slot
+│   └── openLibrary.service.spec.ts       # 8 tests: searchBooks params por tipo + getWorkDetails (axios mockeado)
 └── integration/
-    └── openLibrary.service.spec.ts       # 6 tests: URLs, descripción, mock axios
+    └── openLibrary.service.spec.ts       # 7 tests: funciones puras (URLs, descripción) + 1 llamada real a la API
 ```
+
+**Total: 30 tests.** Cobertura: ~96% statements / 96% branches / 94% functions / 96% lines.
 
 **Ejecutar:** `npm run test:run`
 **Con cobertura:** `npm run test:coverage`
@@ -131,5 +134,5 @@ tests/
 
 ## Herramientas de IA utilizadas
 
-- **Claude Code** (claude-sonnet-4-6) — planificación, scaffolding, implementación completa
+- **Claude Code** (claude-sonnet-4-6 / claude-opus-4-8) — planificación, scaffolding, implementación
 - Ver carpeta `prompts/` para el historial detallado de interacciones
