@@ -114,6 +114,8 @@ Medición sobre el **build de producción** (`npm run preview`, puerto 4173), Li
 Optimizaciones aplicadas: imagen del hero en **WebP** + `preload`, fuente de íconos con carga
 asíncrona, **gzip** y cache de assets en Nginx, y sin recursos de terceros que seteen cookies.
 
+Informe completo: [`docs/lighthouse/Lighthouse Report Viewer.pdf`](docs/lighthouse/Lighthouse%20Report%20Viewer.pdf).
+
 ---
 
 ## Seguridad
