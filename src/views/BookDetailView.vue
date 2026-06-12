@@ -24,6 +24,17 @@ const authorDisplay = computed(() =>
   book.value?.author_name?.join(', ') ?? 'Autor desconocido'
 )
 
+// Línea de metadatos (año · páginas · ISBN), solo con lo disponible.
+const metaLine = computed(() => {
+  const b = book.value
+  if (!b) return ''
+  const parts: string[] = []
+  if (b.first_publish_year) parts.push(`Primera edición: ${b.first_publish_year}`)
+  if (b.number_of_pages_median) parts.push(`${b.number_of_pages_median} páginas`)
+  if (b.isbn?.[0]) parts.push(`ISBN: ${b.isbn[0]}`)
+  return parts.join('  ·  ')
+})
+
 const description = computed(() =>
   workDetail.value ? getWorkDescription(workDetail.value) : ''
 )
@@ -69,10 +80,10 @@ onMounted(async () => {
   <v-container class="py-6">
     <!-- Libro no encontrado (acceso directo por URL) -->
     <template v-if="!book">
-      <v-alert type="info" variant="tonal" icon="mdi-information" class="mb-4">
+      <v-alert type="info" variant="tonal" icon="mdi-information" class="mb-4" rounded="lg">
         Para ver el detalle de un libro, buscalo primero desde la pantalla principal.
       </v-alert>
-      <v-btn prepend-icon="mdi-arrow-left" @click="router.push({ name: 'home' })">
+      <v-btn prepend-icon="mdi-arrow-left" rounded="lg" @click="router.push({ name: 'home' })">
         Ir al buscador
       </v-btn>
     </template>
@@ -82,10 +93,10 @@ onMounted(async () => {
       <v-btn
         variant="text"
         prepend-icon="mdi-arrow-left"
-        class="mb-4"
+        class="mb-4 back-btn"
         @click="router.back()"
       >
-        Volver
+        Volver a resultados
       </v-btn>
 
       <v-row>
@@ -96,20 +107,18 @@ onMounted(async () => {
             :src="coverUrl"
             :alt="book.title"
             max-width="260"
-            class="mx-auto rounded-lg elevation-4"
+            class="mx-auto detail-cover elevation-4"
           />
-          <div
-            v-else
-            class="d-flex align-center justify-center bg-surface-variant rounded-lg mx-auto"
-            style="width: 200px; height: 300px"
-          >
+          <div v-else class="detail-cover cover-fallback">
             <v-icon icon="mdi-book-outline" size="80" color="secondary" />
           </div>
 
           <v-btn
             :color="inList ? 'error' : 'primary'"
             :prepend-icon="inList ? 'mdi-bookmark-remove' : 'mdi-bookmark-plus'"
-            class="mt-4"
+            class="mt-5 add-btn"
+            variant="flat"
+            rounded="lg"
             block
             @click="toggleReadingList"
           >
@@ -119,48 +128,35 @@ onMounted(async () => {
 
         <!-- Información -->
         <v-col cols="12" sm="8" md="9">
-          <h1 class="text-h5 text-md-h4 font-weight-bold mb-1">{{ book.title }}</h1>
-          <p class="text-h6 mb-4" style="color: #C8962A;">{{ authorDisplay }}</p>
+          <h1 class="text-h5 text-md-h4 font-weight-bold mb-1 detail-title">{{ book.title }}</h1>
+          <p class="text-h6 mb-3 detail-author">por {{ authorDisplay }}</p>
 
-          <v-row class="mb-4">
-            <v-col v-if="book.first_publish_year" cols="auto">
-              <v-chip prepend-icon="mdi-calendar" size="small">
-                Primera edición: {{ book.first_publish_year }}
-              </v-chip>
-            </v-col>
-            <v-col v-if="book.number_of_pages_median" cols="auto">
-              <v-chip prepend-icon="mdi-file-document-outline" size="small">
-                {{ book.number_of_pages_median }} páginas
-              </v-chip>
-            </v-col>
-            <v-col v-if="book.isbn?.[0]" cols="auto">
-              <v-chip prepend-icon="mdi-barcode" size="small">
-                ISBN: {{ book.isbn[0] }}
-              </v-chip>
-            </v-col>
-          </v-row>
+          <p v-if="metaLine" class="text-body-2 meta-line mb-4">{{ metaLine }}</p>
+
+          <v-divider class="mb-5 detail-divider" />
 
           <!-- Descripción -->
           <template v-if="loadingDetail">
             <v-skeleton-loader type="paragraph" class="mb-4" />
           </template>
           <template v-else-if="description">
-            <h2 class="text-subtitle-1 font-weight-bold mb-2">Descripción</h2>
-            <p class="text-body-2 mb-4" style="white-space: pre-line; color: #B8A990;">
+            <h2 class="text-subtitle-1 font-weight-bold mb-2 section-title">Descripción</h2>
+            <p class="text-body-2 mb-5 detail-description">
               {{ description }}
             </p>
           </template>
 
           <!-- Temas -->
           <template v-if="subjects.length > 0">
-            <h2 class="text-subtitle-1 font-weight-bold mb-2">Temas</h2>
-            <div class="d-flex flex-wrap gap-2">
+            <h2 class="text-subtitle-1 font-weight-bold mb-2 section-title">Temas</h2>
+            <div class="subjects-list">
               <v-chip
                 v-for="subject in subjects"
                 :key="subject"
                 size="small"
                 variant="tonal"
                 color="primary"
+                rounded="lg"
               >
                 {{ subject }}
               </v-chip>
@@ -171,3 +167,60 @@ onMounted(async () => {
     </template>
   </v-container>
 </template>
+
+<style scoped>
+.back-btn {
+  color: #C8962A;
+}
+
+/* Portada con el mismo redondeo que las cards de resultados */
+.detail-cover {
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+/* Placeholder de libro sin portada (centrado, con fondo) */
+.cover-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 300px;
+  margin: 0 auto;
+  background-color: #2A2318;
+}
+
+.detail-title {
+  color: #EDE0CA;
+}
+
+.detail-author {
+  color: #C8962A;
+}
+
+.meta-line {
+  color: #A89878;
+}
+
+.detail-divider {
+  border-color: #2A2318;
+  opacity: 1;
+}
+
+.section-title {
+  color: #EDE0CA;
+}
+
+.detail-description {
+  white-space: pre-line;
+  color: #B8A990;
+  line-height: 1.6;
+}
+
+/* Chips de temas en fila con saltos (sin depender de utilidades de Vuetify) */
+.subjects-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+</style>

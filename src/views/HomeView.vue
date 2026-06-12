@@ -6,7 +6,8 @@ import EmptyState from '@/components/EmptyState.vue'
 import { searchBooks } from '@/services/openLibrary'
 import type { BookDoc, SearchType } from '@/types/book'
 
-const PAGE_SIZE = 20
+// 8 columnas × 6 filas = 48 resultados por página
+const PAGE_SIZE = 48
 // OpenLibrary no permite paginar indefinidamente; acotamos a un máximo razonable.
 const MAX_PAGES = 100
 
@@ -65,7 +66,7 @@ function goToPage(page: number): void {
     <div
       class="hero-section"
       :style="{
-        backgroundImage: 'url(https://static.vecteezy.com/system/resources/thumbnails/048/330/323/small_2x/elegant-home-library-featuring-traditional-wooden-bookshelves-photo.jpeg)',
+        backgroundImage: 'url(/hero-library.webp)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }"
@@ -77,15 +78,20 @@ function goToPage(page: number): void {
         <p class="text-body-1 text-white mb-6 opacity-80">
           Explorá millones de títulos con OpenLibrary. Buscá por título, autor o ISBN.
         </p>
-        <SearchBar @search="handleSearch" />
+        <!-- Panel contenedor: mantiene legible el buscador sobre la foto de fondo -->
+        <div class="search-panel">
+          <SearchBar @search="handleSearch" />
+        </div>
       </v-container>
     </div>
 
     <!-- Results section -->
     <div class="results-section">
+      <!-- Ancho contenido y centrado, para una proporción cercana al mockup -->
+      <div class="results-inner">
       <!-- Loading skeletons -->
       <div v-if="loading" class="books-grid">
-        <v-skeleton-loader v-for="i in 10" :key="i" type="card" />
+        <v-skeleton-loader v-for="i in 16" :key="i" type="card" />
       </div>
 
       <!-- Error state -->
@@ -138,6 +144,7 @@ function goToPage(page: number): void {
         title="¡Empezá a buscar!"
         description="Ingresá el título, autor o ISBN de un libro para encontrarlo."
       />
+      </div>
     </div>
   </div>
 </template>
@@ -153,13 +160,24 @@ function goToPage(page: number): void {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(10, 7, 4, 0.62), rgba(18, 13, 8, 0.50));
+  background: linear-gradient(to bottom, rgba(10, 7, 4, 0.68), rgba(18, 13, 8, 0.58));
   pointer-events: none;
 }
 
 .hero-section > * {
   position: relative;
   z-index: 1;
+}
+
+/* Caja de búsqueda contenida: tarjeta nítida y legible sobre la foto */
+.search-panel {
+  max-width: 1000px;
+  background: rgba(24, 20, 14, 0.92);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(200, 150, 42, 0.55);
+  border-radius: 16px;
+  padding: 14px 18px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
 }
 
 .results-section {
@@ -170,21 +188,52 @@ function goToPage(page: number): void {
   min-height: 100vh;
 }
 
-.books-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 18px;
+/* Contiene y centra el contenido; ancho suficiente para 8 columnas. */
+.results-inner {
+  max-width: 1700px;
+  margin: 0 auto;
 }
 
-@media (max-width: 1280px) {
+/* Ajustes para móvil: hero más compacto y más ancho útil para las cards */
+@media (max-width: 600px) {
+  .hero-section {
+    padding: 32px 12px 26px;
+  }
+
+  .search-panel {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .results-section {
+    padding: 16px;
+  }
+}
+
+/* 8 columnas en desktop; se reducen en pantallas más chicas. */
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 1400px) {
+  .books-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+
+@media (max-width: 1100px) {
+  .books-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
   .books-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
-@media (max-width: 960px) {
+@media (max-width: 680px) {
   .books-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 480px) {
   .books-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 

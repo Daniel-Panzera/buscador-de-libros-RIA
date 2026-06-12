@@ -22,6 +22,14 @@ const authorDisplay = computed(() =>
   props.book.author_name?.slice(0, 2).join(', ') ?? 'Autor desconocido'
 )
 
+// Línea de metadatos (año · páginas), solo con los datos disponibles.
+const metaLine = computed(() => {
+  const parts: string[] = []
+  if (props.book.first_publish_year) parts.push(String(props.book.first_publish_year))
+  if (props.book.number_of_pages_median) parts.push(`${props.book.number_of_pages_median} págs.`)
+  return parts.join(' · ')
+})
+
 const inList = computed(() => readingListStore.isInList(props.book.key))
 
 const workId = computed(() => props.book.key.replace('/works/', ''))
@@ -47,84 +55,138 @@ function toggleReadingList(): void {
 </script>
 
 <template>
-  <v-card height="100%" class="d-flex flex-column" elevation="2">
-    <v-img
-      :src="coverUrl ?? undefined"
-      :aspect-ratio="2/3"
-      cover
-      :alt="book.title"
-    >
-      <template #error>
-        <div class="d-flex align-center justify-center fill-height bg-surface-variant">
-          <v-icon icon="mdi-book-outline" size="64" color="secondary" />
-        </div>
-      </template>
-      <template v-if="!coverUrl" #default>
-        <div class="d-flex align-center justify-center fill-height bg-surface-variant">
-          <v-icon icon="mdi-book-outline" size="64" color="secondary" />
-        </div>
-      </template>
-    </v-img>
-
-    <v-card-title class="book-title pb-0">
-      {{ book.title }}
-    </v-card-title>
-
-    <v-card-subtitle class="book-subtitle pb-0">{{ authorDisplay }}</v-card-subtitle>
-
-    <v-card-text class="flex-grow-1 pt-2">
-      <v-chip
-        v-if="book.first_publish_year"
-        size="x-small"
-        prepend-icon="mdi-calendar"
-        class="mr-1"
+  <!-- La card completa navega al detalle (flujo del mockup: "click en card") -->
+  <v-card
+    class="book-card d-flex flex-column"
+    elevation="3"
+    role="button"
+    :aria-label="`Ver detalle de ${book.title}`"
+    @click="navigateToDetail"
+  >
+    <div class="cover-wrap">
+      <v-img
+        :src="coverUrl ?? undefined"
+        :aspect-ratio="2 / 3"
+        cover
+        class="cover-img"
+        :alt="book.title"
       >
-        {{ book.first_publish_year }}
-      </v-chip>
-      <v-chip
-        v-if="book.number_of_pages_median"
-        size="x-small"
-        prepend-icon="mdi-file-document-outline"
-      >
-        {{ book.number_of_pages_median }} págs.
-      </v-chip>
-    </v-card-text>
+        <template #error>
+          <div class="cover-fallback">
+            <v-icon icon="mdi-book-outline" size="48" color="secondary" />
+          </div>
+        </template>
+        <template v-if="!coverUrl" #default>
+          <div class="cover-fallback">
+            <v-icon icon="mdi-book-outline" size="48" color="secondary" />
+          </div>
+        </template>
+      </v-img>
+    </div>
 
-    <v-card-actions>
+    <div class="card-body flex-grow-1">
+      <h3 class="book-title">{{ book.title }}</h3>
+      <p class="book-author">{{ authorDisplay }}</p>
+      <p v-if="metaLine" class="book-meta">{{ metaLine }}</p>
+    </div>
+
+    <div class="card-actions">
       <v-btn
-        variant="tonal"
+        block
         size="small"
-        prepend-icon="mdi-eye"
-        @click="navigateToDetail"
-      >
-        Detalle
-      </v-btn>
-      <v-spacer />
-      <v-btn
         :color="inList ? 'error' : 'primary'"
-        variant="tonal"
-        size="small"
-        :icon="inList ? 'mdi-bookmark-remove' : 'mdi-bookmark-plus'"
-        :title="inList ? 'Quitar de mi lista' : 'Agregar a mi lista'"
-        @click="toggleReadingList"
-      />
-    </v-card-actions>
+        variant="flat"
+        rounded="lg"
+        class="add-btn"
+        :prepend-icon="inList ? 'mdi-bookmark-remove' : 'mdi-bookmark-plus'"
+        @click.stop="toggleReadingList"
+      >
+        {{ inList ? 'Quitar de mi lista' : 'Agregar a mi lista' }}
+      </v-btn>
+    </div>
   </v-card>
 </template>
 
 <style scoped>
+.book-card {
+  border-radius: 14px;
+  background-color: #1E1A14;
+  border: 1px solid #2A2318;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.book-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(200, 150, 42, 0.5);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+
+/* Resaltado de Vuetify: apenas un tinte dorado, no tapa la portada */
+.book-card :deep(.v-card__overlay) {
+  background-color: #C8962A;
+}
+
+.book-card:hover :deep(.v-card__overlay) {
+  opacity: 0.05 !important;
+}
+
+/* Portada con pequeño margen interno y esquinas redondeadas */
+.cover-wrap {
+  padding: 8px 8px 0;
+}
+
+.cover-img {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Placeholder de libros sin portada (centrado y con fondo, sin utilidades) */
+.cover-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background-color: #2A2318;
+}
+
+.card-body {
+  padding: 8px 12px 2px;
+}
+
 .book-title {
-  font-size: 0.875rem !important;
+  font-size: 0.82rem;
   font-weight: 700;
   line-height: 1.3;
+  color: #EDE0CA;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  margin: 0;
 }
 
-.book-subtitle {
-  font-size: 0.8rem !important;
-  opacity: 0.7;
+.book-author {
+  font-size: 0.74rem;
+  color: #A89878;
+  margin: 3px 0 0;
+}
+
+.book-meta {
+  font-size: 0.7rem;
+  color: #8D6E47;
+  margin: 3px 0 0;
+}
+
+.card-actions {
+  padding: 8px 10px 10px;
+}
+
+.add-btn {
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  text-transform: none;
 }
 </style>

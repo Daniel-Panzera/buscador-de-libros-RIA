@@ -25,8 +25,9 @@ function handleSubmit(): void {
 
 <template>
   <v-form @submit.prevent="handleSubmit">
-    <v-row align="end" dense>
-      <v-col cols="12" sm="3">
+    <!-- Una sola fila: selector + campo + botón alineados a la misma línea -->
+    <div class="search-bar">
+      <div class="field-col field-type">
         <label class="field-label">Buscar por</label>
         <v-select
           v-model="searchType"
@@ -39,9 +40,9 @@ function handleSubmit(): void {
           class="glass-field"
           :menu-props="{ contentClass: 'search-type-menu' }"
         />
-      </v-col>
+      </div>
 
-      <v-col cols="12" sm="6">
+      <div class="field-col field-term">
         <label class="field-label">Término de búsqueda</label>
         <v-text-field
           v-model="query"
@@ -53,35 +54,92 @@ function handleSubmit(): void {
           class="glass-field"
           @keyup.enter="handleSubmit"
         />
-      </v-col>
+      </div>
 
-      <v-col cols="12" sm="3">
+      <div class="field-col field-action">
+        <!-- Label fantasma: alinea el botón con los campos sin texto visible -->
+        <span class="field-label field-label--spacer" aria-hidden="true">&nbsp;</span>
         <v-btn
           type="submit"
           size="large"
-          block
           :disabled="!query.trim()"
           class="search-btn"
         >
           Buscar
         </v-btn>
-      </v-col>
-    </v-row>
+      </div>
+    </div>
   </v-form>
 </template>
 
 <style scoped>
+/* Fila única: selector | campo (crece) | botón. Las columnas se estiran
+   a la misma altura (stretch); el botón se adapta a la de los campos. */
+.search-bar {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.field-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-type {
+  flex: 0 0 220px;
+}
+
+.field-term {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.field-action {
+  flex: 0 0 auto;
+}
+
+/* En celular se apila en columna, cada elemento a lo ancho */
+@media (max-width: 599px) {
+  .search-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .field-type {
+    flex: 1 1 auto;
+  }
+
+  .field-label--spacer {
+    display: none;
+  }
+
+  .search-btn {
+    width: 100%;
+  }
+}
+
 .field-label {
   display: block;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 600;
   color: #EDE0CA;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
+/* Label fantasma del botón: ocupa el mismo alto que un label real */
+.field-label--spacer {
+  visibility: hidden;
+}
+
 .search-btn {
+  /* Se estira para ocupar la altura natural del campo (debajo del label) */
+  flex: 1 1 auto;
+  height: auto !important;
+  min-height: 0;
+  min-width: 120px;
   background-color: #C8962A !important;
   color: #12100C !important;
   font-weight: 700 !important;
