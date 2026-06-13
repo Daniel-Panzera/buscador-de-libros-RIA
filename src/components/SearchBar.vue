@@ -17,7 +17,8 @@ const searchOptions = [
 ] as const
 
 function handleSubmit(): void {
-  const trimmed = query.value.trim()
+  // El clearable de Vuetify puede dejar query en null; normalizamos antes de usar
+  const trimmed = (query.value ?? '').trim()
   if (!trimmed) return
   emit('search', { query: trimmed, type: searchType.value })
 }
@@ -62,7 +63,7 @@ function handleSubmit(): void {
         <v-btn
           type="submit"
           size="large"
-          :disabled="!query.trim()"
+          :disabled="!query?.trim()"
           class="search-btn"
         >
           Buscar
