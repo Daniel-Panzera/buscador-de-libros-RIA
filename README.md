@@ -7,6 +7,10 @@ Permite buscar por título, autor o ISBN, ver el detalle de cada libro y gestion
 
 ---
 
+## Demo 
+
+https://www.youtube.com/watch?v=_8m3_gngdok 
+
 ## Tecnologías
 
 | Herramienta | Propósito |
